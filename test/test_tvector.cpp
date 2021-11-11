@@ -204,4 +204,5 @@ TEST(TVector, can_multiply_vectors_with_equal_size)
 TEST(TVector, cant_multiply_vectors_with_not_equal_size)
 {
 	TVector <int> a(5), b(4);
+	ASSERT_ANY_THROW(a * b);
 }
