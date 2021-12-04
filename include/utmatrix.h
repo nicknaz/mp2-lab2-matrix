@@ -164,36 +164,72 @@ TVector<ValType> TVector<ValType>::operator*(const ValType &val)
 template <class ValType> // сложение
 TVector<ValType> TVector<ValType>::operator+(const TVector<ValType> &v)
 {
-	if ((Size != v.Size) || (StartIndex != v.StartIndex))
+	if (Size + StartIndex != v.Size + v.StartIndex)
 		throw 1;
-	TVector<ValType> resVector(*this);
+
+	int delta = v.StartIndex - StartIndex;
+	if (StartIndex < v.StartIndex){
+		TVector<ValType> resVector(*this);
+		for (int i = 0; i < v.Size; i++){
+			resVector.pVector[i + delta] = resVector.pVector[i + delta] + v.pVector[i];
+		}
+		return resVector;
+	}
+	else{
+		TVector<ValType> resVector(v);
+		for (int i = 0; i < Size; i++){
+			resVector.pVector[i + delta] = resVector.pVector[i + delta] + pVector[i];
+		}
+		return resVector;
+	}
+
+	/*TVector<ValType> resVector(*this);
 	for (int i = 0; i < Size; i++)
 		resVector.pVector[i] += v.pVector[i];
-
-	return resVector;
+		*/
+	
 } /*-------------------------------------------------------------------------*/
 
 template <class ValType> // вычитание
 TVector<ValType> TVector<ValType>::operator-(const TVector<ValType> &v)
 {
-	if ((Size != v.Size) || (StartIndex != v.StartIndex))
+	if (Size + StartIndex != v.Size + v.StartIndex)
 		throw 1;
-	TVector<ValType> resVector(*this);
-	for (int i = 0; i < Size; i++)
-		resVector.pVector[i] -= v.pVector[i];
 
-	return resVector;
+	int delta = v.StartIndex - StartIndex;
+	if (StartIndex < v.StartIndex){
+		TVector<ValType> resVector(*this);
+		for (int i = 0; i < v.Size; i++){
+			resVector.pVector[i + delta] = resVector.pVector[i + delta] - v.pVector[i];
+		}
+		return resVector;
+	}
+	else{
+		TVector<ValType> resVector(v);
+		for (int i = 0; i < Size; i++){
+			resVector.pVector[i + delta] = pVector[i] - resVector.pVector[i + delta];
+		}
+		return resVector;
+	}
 } /*-------------------------------------------------------------------------*/
 
 template <class ValType> // скалярное произведение
 ValType TVector<ValType>::operator*(const TVector<ValType> &v)
 {
-	if ((Size != v.Size) || (StartIndex != v.StartIndex))
+	if (Size + StartIndex != v.Size + v.StartIndex)
 		throw 1;
 	ValType result = 0;
-	for (int i = 0; i < Size; i++)
-		result += pVector[i] * v.pVector[i];
-
+	int delta = v.StartIndex - StartIndex;
+	if (StartIndex < v.StartIndex){
+		for (int i = 0; i < Size - v.StartIndex; i++){
+			result += pVector[i + delta] * v.pVector[i];
+		}		
+	}
+	else{
+		for (int i = 0; i < Size; i++){
+			result += pVector[i] * v.pVector[i];
+		}
+	}
 	return result;
 } /*-------------------------------------------------------------------------*/
 
